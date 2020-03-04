@@ -8,3 +8,27 @@
   left: 82px;
   top: 76px;
 }
+
+.TargetTemp{
+  position: absolute;
+  left: 178px;
+  top: 93px;
+  text-align: center;
+}
+
+.CurrentTemp{
+  position: absolute;
+  left: 148px;
+  top: 223px;
+  text-align: center;
+}
+
+h1 {
+  font-size:90px;
+  color: white;
+}
+
+h2{
+  font-size: 30px;
+  color: white;
+}

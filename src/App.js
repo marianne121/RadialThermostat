@@ -9,12 +9,15 @@ function App () {
       <div className="radial-thermostat">
       <svg width="400" height="400">
       <RadialThermostat/>
-      <CircularBackground/>
-      
-      <ThermostatKnob/>
       </svg>
         <div className="Dials">
         <TemperatureDials/>
+        </div>
+        <div className="TargetTemp">
+          <TargetTemp/>
+        </div>
+        <div className="CurrentTemp">
+          <CurrentTemp/>
         </div>
       </div>
     </div>
@@ -23,7 +26,11 @@ function App () {
 class RadialThermostat extends React.Component{
   render() {
     return (
+      <React.Fragment>
         <circle cx="225" cy="225" r="175" fill="#f0f0f0"/>
+        <CircularBackground/>
+      </React.Fragment>
+        
     );
   }
 }
@@ -31,7 +38,10 @@ class RadialThermostat extends React.Component{
 class CircularBackground extends React.Component{
   render() {
     return(
+      <React.Fragment>
         <circle cx="225" cy="225" r="165" fill="#ffffff"/>
+        <ThermostatKnob/>
+      </React.Fragment> 
     );
   }
 }
@@ -66,6 +76,22 @@ class TemperatureDials extends React.Component{
   render() {
     return (
       <img src={Scale} alt="tempScale" width="287" height="287"/>
+    )
+  }
+}
+
+class TargetTemp extends React.Component{
+  render() {
+    return (
+        <h1>72</h1>
+    )
+  }
+}
+
+class CurrentTemp extends React.Component{
+  render() {
+    return (
+        <h2>Current: 72</h2>
     )
   }
 }
