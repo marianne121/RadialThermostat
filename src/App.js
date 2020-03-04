@@ -49,7 +49,6 @@ class CircularBackground extends React.Component{
 class ThermostatKnob extends React.Component{
   render() {
     return (
-      
       <React.Fragment>
             <linearGradient id="grayColour">
        <stop offset="0%" stop-color="#353b3f"></stop>
@@ -75,7 +74,28 @@ class ThermostatKnob extends React.Component{
 class TemperatureDials extends React.Component{
   render() {
     return (
-      <img src={Scale} alt="tempScale" width="287" height="287"/>
+      <React-Fragment>
+        <img src={Scale} alt="tempScale" width="287" height="287"/>
+        <TemperatureIndicator/>
+      </React-Fragment>
+      
+    )
+  }
+}
+
+class TemperatureIndicator extends React.Component {
+  state = {
+    value:72
+  }
+  changeValue(val) {
+    this.setState({value:val})
+  }
+  render() {
+    return (
+        <div className="tempIndicator"/>
+    );
+    return (
+      <TemperatureIndicator onChange={this.changeValue.bind(this)} min={0} max={100} value={this.state.value}/>
     )
   }
 }

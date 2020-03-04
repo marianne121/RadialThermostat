@@ -28,7 +28,46 @@ h1 {
   color: white;
 }
 
-h2{
+h2 {
   font-size: 30px;
   color: white;
 }
+
+body {
+  background-color: #ecf0f1;
+}
+
+.debug {
+  color: #9b59b6;
+  font-family: monospace;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  z-index: 100;
+  font-size: 3vw;
+}
+.tempIndicator {
+  position: absolute;
+  width: 4%;
+  height: 100%;
+  left: 48.5%;
+  top: 4%;
+  transform: rotate(0deg);
+  transform-origin: center bottom;
+}
+.tempIndicator:before {
+  content: "";
+  position: absolute;
+  background-color: #FFC000;
+  width: 80%;
+  transform: translate3d(-25%, -25%, 0);
+  height: 3%;
+  padding-bottom: 200%;
+  border-style: solid;
+  border-radius: 50%;
+  border-color: white;
+  border-width: 1px;
+  cursor: pointer;
+}
+
