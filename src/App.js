@@ -3,25 +3,42 @@ import logo from './logo.svg';
 import './App.css';
 import Scale from './scale.png' 
 
-function App () {
-  return (
-    <div className="App">
-      <div className="radial-thermostat">
-      <svg width="400" height="400">
-      <RadialThermostat/>
-      </svg>
-        <div className="Dials">
-        <TemperatureDials/>
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      currentTemp : ''
+    };
+  }
+  handleChangeValue = e => this.setState({currentTemp: e.target.value});
+
+  render () {
+    return (
+      <div className="App">
+        <div className="radial-thermostat">
+        <svg width="400" height="400">
+        <RadialThermostat/>
+        </svg>
+          <div className="Dials">
+          <TemperatureDials/>
+          </div>
+          <div className="TargetTemp">
+            <TargetTemp/>
+          </div>
+          <div>
+          <TestControls 
+          value={this.state.currentTemp}
+          onChangeValue={this.handleChangeValue}/>
         </div>
-        <div className="TargetTemp">
-          <TargetTemp/>
-        </div>
-        <div className="CurrentTemp">
-          <CurrentTemp/>
+          <div className="CurrentTemp">
+            <CurrentTemp currentTemp={this.state.currentTemp}/>
+          </div>
+          
         </div>
       </div>
-    </div>
-  )
+    );
+  }
+ 
 }
 class RadialThermostat extends React.Component{
   render() {
@@ -109,10 +126,32 @@ class TargetTemp extends React.Component{
 }
 
 class CurrentTemp extends React.Component{
+
   render() {
     return (
-        <h2>Current: 72</h2>
+        <h2>Current: {this.props.currentTemp}</h2>
     )
+  }
+}
+
+class TestControls extends React.Component{
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return (
+      <div>
+        <form>
+          <label htmlFor="currentTemp">Set Current Temperature: </label>
+          <input 
+            type="text"
+            name="currentTemp"
+            value={this.props.currentTemp}
+            onChange={this.props.onChangeValue}
+            />
+        </form>
+      </div>
+    );
   }
 }
 
