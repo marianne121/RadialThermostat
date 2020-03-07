@@ -49,14 +49,14 @@ h2 {
   position: absolute;
   width: 90%;
   height: 90%;
-  background-color: green;
+  background-color: none;
   border-radius: 50%;
   top: 5%;
   left: 5%;
 }
 .Knob .Indicator {
   position: absolute;
-  background-color: red;
+  background-color: none;
   width: 5%;
   height: 50%;
   left: 47.5%;

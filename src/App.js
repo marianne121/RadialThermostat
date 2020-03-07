@@ -30,11 +30,10 @@ class App extends React.Component {
           </div>
           <Knob
           size={300}
-          numTicks={25}
-          degrees={260}
+          degrees={310}
           min={1}
           max={100}
-          value={30}
+          value={1}
           color={true}
           onChange={this.handleChange}
         />
@@ -118,18 +117,19 @@ class Knob extends React.Component {
   constructor(props) {
     super(props);
     this.fullAngle = props.degrees;
-    this.startAngle = (360 - props.degrees) / 2;
-    this.endAngle = this.startAngle + props.degrees;
-    this.margin = props.size * 0.15;
+    this.startAngle = 205;
+    this.endAngle = 155;
     this.currentDeg = Math.floor(
-      this.convertRange(
-        props.min,
+      this.getAngle(
+        this.fullAngle,
         props.max,
-        this.startAngle,
-        this.endAngle,
-        props.value
+        props.min,
+        props.value,
+        this.startAngle
       )
     );
+    console.log("current deg = " + this.currentDeg);
+    console.log("current value "+props.value);
     this.state = { deg: this.currentDeg };
   }
 
@@ -142,17 +142,18 @@ class Knob extends React.Component {
     };
     const moveHandler = e => {
       this.currentDeg = this.getDeg(e.clientX, e.clientY, pts);
-      if (this.currentDeg === this.startAngle) this.currentDeg--;
+      // if (this.currentDeg === this.startAngle) this.currentDeg--;
       let newValue = Math.floor(
-        this.convertRange(
-          this.startAngle,
-          this.endAngle,
-          this.props.min,
+        this.getValue(
+          this.fullAngle,
           this.props.max,
-          this.currentDeg
+          this.props.min,
+          this.currentDeg,
+          this.startAngle
         )
       );
       this.setState({ deg: this.currentDeg });
+      console.log("new value: "+newValue);
       this.props.onChange(newValue);
     };
     document.addEventListener("mousemove", moveHandler);
@@ -162,20 +163,37 @@ class Knob extends React.Component {
   };
 
   getDeg = (cX, cY, pts) => {
-    const x = cX - pts.x;
-    const y = cY - pts.y;
-    let deg = Math.atan(y / x) * 180 / Math.PI;
-    if ((x < 0 && y >= 0) || (x < 0 && y < 0)) {
-      deg += 90;
-    } else {
-      deg += 270;
-    }
-    let finalDeg = Math.min(Math.max(this.startAngle, deg), this.endAngle);
-    return finalDeg;
+    const x = pts.x - cX;
+    const y = pts.y - cY;
+    // 180/Math.PI helps to convert to degree
+    let deg = Math.atan2(y, x) * (180/Math.PI);
+    console.log("original degree: "+deg);
+    // change start line from bottom vertical axis
+    deg = deg-90;
+
+    if(deg<0) {
+      deg=360+deg;
+   }
+   console.log("final deg: "+deg);
+   if (155< deg && deg<165) {
+     deg=155;
+   } else if (165<deg && deg<205){
+     console.log("maximum temperature set");
+      deg=205;
+   }
+
+    console.log(deg);
+
+
+    return deg;
   };
 
-  convertRange = (oldMin, oldMax, newMin, newMax, oldValue) => {
-    return (oldValue - oldMin) * (newMax - newMin) / (oldMax - oldMin) + newMin;
+  getAngle = (fullAngle, maxValue, minValue, currentValue, startAngle) => {
+    return (fullAngle / (maxValue-minValue+1)) * (currentValue-1) + startAngle;
+  };
+
+  getValue = (fullAngle, maxValue, minValue, currentAngle, startAngle) => {
+    return ((maxValue-minValue+1) / fullAngle) * (currentAngle-startAngle);
   };
 
   render () {
