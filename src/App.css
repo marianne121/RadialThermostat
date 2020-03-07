@@ -33,7 +33,7 @@ h2 {
   color: white;
 }
 
-.Knob {
+.TemperatureIndicator {
   position: absolute;
   top: 30%;
   left: 33.5%;
@@ -44,7 +44,7 @@ h2 {
   padding-bottom: 40%;
   transform: translate3d(-50%, -50%, 0);
 }
-.Knob:before {
+.TemperatureIndicator:before {
   content: "";
   position: absolute;
   width: 90%;
@@ -54,7 +54,7 @@ h2 {
   top: 5%;
   left: 5%;
 }
-.Knob .Indicator {
+.TemperatureIndicator .Pointer {
   position: absolute;
   background-color: none;
   width: 5%;
@@ -64,7 +64,7 @@ h2 {
   transform: rotate(0deg);
   transform-origin: center bottom;
 }
-.Knob .Indicator:before {
+.TemperatureIndicator .Pointer:before {
   content: "";
   position: absolute;
   background-color: #fff;

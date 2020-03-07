@@ -7,13 +7,15 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentTemp : '',
-      value: 32
+      currentTemp : 32,
+      targetTemp: 50
     };
   }
-  handleChange = newValue => {this.setState({value: newValue});
-  console.log("new value has been passed: "+this.state.value);};
-  handleChangeValue = e => this.setState({currentTemp: e.target.value});
+
+  handleTargetChange = newValue => {this.setState({targetTemp: newValue});
+  
+  console.log("new value has been passed: "+this.state.targetTemp);};
+  handleCurrentChange = e => this.setState({currentTemp: e.target.value});
 
   render () {
     return (
@@ -25,22 +27,24 @@ class App extends React.Component {
           <div className="Dials">
           <TemperatureDials/>
           </div>
-          <Knob
+          <TemperatureIndicator
           size={300}
-          degrees={310}
-          min={32}
-          max={100}
-          value={32}
+          totalDeg={310}
+          startAngle={205}
+          endAngle={155}
+          minTemp={50}
+          maxTemp={80}
+          targetTemp={50}
           color={true}
-          onChange={this.handleChange}
+          onChange={this.handleTargetChange}
         />
           <div className="TargetTemp">
-            <TargetTemp targetTemp={this.state.value}/>
+            <TargetTemp targetTemp={this.state.targetTemp}/>
           </div>
           <div>
           <TestControls 
           value={this.state.currentTemp}
-          onChangeValue={this.handleChangeValue}/>
+          onChangeValue={this.handleCurrentChange}/>
         </div>
           <div className="CurrentTemp">
             <CurrentTemp currentTemp={this.state.currentTemp}/>
@@ -52,6 +56,7 @@ class App extends React.Component {
   }
  
 }
+
 class RadialThermostat extends React.Component{
   render() {
     return (
@@ -110,45 +115,47 @@ class TemperatureDials extends React.Component{
   }
 }
 
-class Knob extends React.Component {
+
+class TemperatureIndicator extends React.Component {
   constructor(props) {
     super(props);
-    this.fullAngle = props.degrees;
-    this.startAngle = 205;
-    this.endAngle = 155;
+    this.fullAngle = props.totalDeg;
+    this.startAngle = props.startAngle;
+    this.endAngle = props.endAngle;
+    this.maxTemp = props.maxTemp;
+    this.minTemp = props.minTemp;
     this.currentDeg = Math.floor(
       this.getAngle(
         this.fullAngle,
-        props.max,
-        props.min,
-        props.value,
+        this.maxTemp,
+        this.minTemp,
+        props.targetTemp,
         this.startAngle
       )
     );
     console.log("current deg = " + this.currentDeg);
-    console.log("current value "+props.value);
+    console.log("current value "+props.targetTemp);
     this.state = { deg: this.currentDeg };
   }
 
   startDrag = e => {
     e.preventDefault();
     const knob = e.target.getBoundingClientRect();
-    const pts = {
-      x: knob.left + knob.width / 2,
-      y: knob.top + knob.height / 2
-    };
+    // coordinates of the center of the knob
+    const centerX = knob.left + knob.width / 2;
+    const centerY = knob.top + knob.height / 2;
+
     const moveHandler = e => {
-      this.currentDeg = this.getDeg(e.clientX, e.clientY, pts);
-      // if (this.currentDeg === this.startAngle) this.currentDeg--;
+      this.currentDeg = this.getDeg(e.clientX, e.clientY, centerX, centerY);
       let newValue = Math.floor(
         this.getValue(
           this.fullAngle,
-          this.props.max,
-          this.props.min,
+          this.maxTemp,
+          this.minTemp,
           this.currentDeg,
           this.startAngle,
           this.endAngle,
-          this.props.value
+          this.props.targetTemp
         )
       );
       this.setState({ deg: this.currentDeg });
@@ -161,29 +168,31 @@ class Knob extends React.Component {
     });
   };
 
-  getDeg = (cX, cY, pts) => {
-    const x = pts.x - cX;
-    const y = pts.y - cY;
-    // 180/Math.PI helps to convert to degree
-    let deg = Math.atan2(y, x) * (180/Math.PI);
-    console.log("original degree: "+deg);
-    // change start line from bottom vertical axis
-    deg = deg-90;
+  getDeg = (clickX, clickY, centerX, centerY) => {
+    const lengthX = centerX - clickX;
+    const lengthY = centerY - clickY;
 
-    if(deg<0) {
-      deg=360+deg;
-   }
+    // 180/Math.PI helps to convert to degree
+    let deg = Math.atan2(lengthY, lengthX) * (180/Math.PI);
+    console.log("original degree: "+deg);
+    
+    // angle translation
+    deg = 270+deg;
+    if(deg>360) {
+      deg = deg-360;
+    }
+
    console.log("final deg: "+deg);
-   if (155< deg && deg<165) {
-     deg=155;
-   } else if (165<deg && deg<205){
+   let middle = (this.startAngle-this.endAngle)/2 + this.endAngle;
+   console.log("mid is: "+middle);
+   if (this.endAngle<deg && deg<=middle) {
+     deg=this.endAngle;
+   } else if (middle<=deg && deg<this.startAngle){
      console.log("maximum temperature set");
-      deg=205;
+      deg=this.startAngle;
    }
 
     console.log(deg);
-
-
     return deg;
   };
 
@@ -194,29 +203,27 @@ class Knob extends React.Component {
   getValue = (fullAngle, maxValue, minValue, currentAngle, startAngle, endAngle, oldValue) => {
     let angleDiff = 0;
     if(currentAngle >= 205) {
+      console.log("current angle: "+currentAngle);
       angleDiff = currentAngle - startAngle;
     } else if (currentAngle <= 155) {
       console.log("current Angle :" + currentAngle);
       angleDiff = 360-205+currentAngle;
     }
-    return ((maxValue-minValue+1) / fullAngle) * angleDiff + oldValue -1;
+    return ((maxValue-minValue+1) / fullAngle) * angleDiff + oldValue;
   };
 
   render () {
-    //`rotate( deg)`
     const styles = {
       transform: "rotate(" +this.state.deg +"deg)",
     }
     return (
       <div>
-        <div className="Knob">
-        <div className="Indicator" style={styles} onMouseDown={this.startDrag}/>
+        <div className="TemperatureIndicator">
+        <div className="Pointer" style={styles} onMouseDown={this.startDrag}/>
         </div>
       </div>
     )
   }
-  
-  
 }
 
 class TargetTemp extends React.Component{
@@ -240,6 +247,7 @@ class TestControls extends React.Component{
   constructor(props) {
     super(props);
   }
+
   render() {
     return (
       <div>
