@@ -8,14 +8,11 @@ class App extends React.Component {
     super(props);
     this.state = {
       currentTemp : '',
-      value: 0
+      value: 32
     };
   }
-  handleChange = newValue => {
-    this.setState({
-      value: newValue
-    });
-  };
+  handleChange = newValue => {this.setState({value: newValue});
+  console.log("new value has been passed: "+this.state.value);};
   handleChangeValue = e => this.setState({currentTemp: e.target.value});
 
   render () {
@@ -31,14 +28,14 @@ class App extends React.Component {
           <Knob
           size={300}
           degrees={310}
-          min={1}
+          min={32}
           max={100}
-          value={1}
+          value={32}
           color={true}
           onChange={this.handleChange}
         />
           <div className="TargetTemp">
-            <TargetTemp/>
+            <TargetTemp targetTemp={this.state.value}/>
           </div>
           <div>
           <TestControls 
@@ -149,7 +146,9 @@ class Knob extends React.Component {
           this.props.max,
           this.props.min,
           this.currentDeg,
-          this.startAngle
+          this.startAngle,
+          this.endAngle,
+          this.props.value
         )
       );
       this.setState({ deg: this.currentDeg });
@@ -189,11 +188,18 @@ class Knob extends React.Component {
   };
 
   getAngle = (fullAngle, maxValue, minValue, currentValue, startAngle) => {
-    return (fullAngle / (maxValue-minValue+1)) * (currentValue-1) + startAngle;
+    return (fullAngle / (maxValue-minValue+1)) * (currentValue-minValue) + startAngle;
   };
 
-  getValue = (fullAngle, maxValue, minValue, currentAngle, startAngle) => {
-    return ((maxValue-minValue+1) / fullAngle) * (currentAngle-startAngle);
+  getValue = (fullAngle, maxValue, minValue, currentAngle, startAngle, endAngle, oldValue) => {
+    let angleDiff = 0;
+    if(currentAngle >= 205) {
+      angleDiff = currentAngle - startAngle;
+    } else if (currentAngle <= 155) {
+      console.log("current Angle :" + currentAngle);
+      angleDiff = 360-205+currentAngle;
+    }
+    return ((maxValue-minValue+1) / fullAngle) * angleDiff + oldValue -1;
   };
 
   render () {
@@ -216,7 +222,7 @@ class Knob extends React.Component {
 class TargetTemp extends React.Component{
   render() {
     return (
-        <h1>72</h1>
+        <h1>{this.props.targetTemp}</h1>
     )
   }
 }
