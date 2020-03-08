@@ -3,6 +3,12 @@
   min-height: 100vh;
 }
 
+.radial-thermostat {
+  position: relative;
+  width: 500px;
+  height: 500px;
+}
+
 .Dials{
   position: absolute;
   left: 82px;
@@ -35,13 +41,13 @@ h2 {
 
 .TemperatureIndicator {
   position: absolute;
-  top: 30%;
-  left: 33.5%;
+  top: 45%;
+  left:45%;
   background-color: none;
   border-radius: 50%;
-  width: 40%;
+  width: 52%;
   height: 0;
-  padding-bottom: 40%;
+  padding-bottom: 52%;
   transform: translate3d(-50%, -50%, 0);
 }
 .TemperatureIndicator:before {

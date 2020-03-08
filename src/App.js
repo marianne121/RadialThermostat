@@ -28,7 +28,6 @@ class App extends React.Component {
           <TemperatureDials/>
           </div>
           <TemperatureIndicator
-          size={300}
           totalDeg={310}
           startAngle={205}
           endAngle={155}
@@ -38,6 +37,7 @@ class App extends React.Component {
           color={true}
           onChange={this.handleTargetChange}
         />
+          
           <div className="TargetTemp">
             <TargetTemp targetTemp={this.state.targetTemp}/>
           </div>
