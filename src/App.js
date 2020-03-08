@@ -7,8 +7,9 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentTemp : 32,
-      targetTemp: 50
+      currentTemp : 66,
+      targetTemp: 50,
+      mode: "off"
     };
   }
 
@@ -22,7 +23,10 @@ class App extends React.Component {
       <div className="App">
         <div className="radial-thermostat">
         <svg width="400" height="400">
-        <RadialThermostat/>
+        <RadialThermostat
+        targetTemp={this.state.targetTemp}
+        currentTemp={this.state.currentTemp}
+        mode={this.state.mode}/>
         </svg>
           <div className="Dials">
           <TemperatureDials/>
@@ -47,7 +51,9 @@ class App extends React.Component {
           onChangeValue={this.handleCurrentChange}/>
         </div>
           <div className="CurrentTemp">
-            <CurrentTemp currentTemp={this.state.currentTemp}/>
+            <CurrentTemp 
+            currentTemp={this.state.currentTemp}
+            />
           </div>
           
         </div>
@@ -58,11 +64,18 @@ class App extends React.Component {
 }
 
 class RadialThermostat extends React.Component{
+  constructor(props) {
+    super(props);
+  }
   render() {
     return (
       <React.Fragment>
         <circle cx="225" cy="225" r="175" fill="#f0f0f0"/>
-        <CircularBackground/>
+        <CircularBackground
+        targetTemp={this.props.targetTemp}
+        currentTemp={this.props.currentTemp}
+        mode={this.props.mode}
+        />
       </React.Fragment>
         
     );
@@ -70,18 +83,64 @@ class RadialThermostat extends React.Component{
 }
 
 class CircularBackground extends React.Component{
+  constructor(props) {
+    super(props);
+  }
   render() {
     return(
       <React.Fragment>
         <circle cx="225" cy="225" r="165" fill="#ffffff"/>
-        <ThermostatKnob/>
+        <ThermostatKnob
+         targetTemp={this.props.targetTemp}
+         currentTemp={this.props.currentTemp}
+         mode={this.props.mode}
+        />
       </React.Fragment> 
     );
   }
 }
 
 class ThermostatKnob extends React.Component{
-  render() {
+  constructor(props) {
+    super(props);
+  }
+
+  updateMode = (currentTemp, targetTemp, mode) => {
+    let dT = 2;
+    let dTCool = 1.5;
+    let dTHeat = 1;
+
+    console.log("Target temp is : " + targetTemp + " & current temp is : " + currentTemp);
+    let value = targetTemp+dT+dTHeat;
+    console.log(value);
+    if(currentTemp > targetTemp + dT + dTCool) { // set blue = #4a92d8
+      mode = "cooling";
+      console.log("in the cooling loop");
+    } else if (currentTemp < targetTemp + dT + dTHeat) { // set red = #e06b71
+      mode = "heating";
+    } else if (targetTemp - (dT-dTHeat) < currentTemp && // set default gray = #353b3f
+    currentTemp < targetTemp + (dT-dTCool)){
+      mode = "off";
+    } 
+    return mode;
+  };
+
+  setColour = (mode) => {
+    let colour;
+    if(mode==="cooling") {
+      colour = "#4a92d8";
+    } else if (mode==="heating") {
+      colour = "#e06b71";
+    } else if(mode==="off") {
+      colour = "#353b3f";
+    }
+    return colour;
+  }
+
+  render() { 
+    let newMode = this.updateMode(this.props.currentTemp, this.props.targetTemp, this.props.mode);
+    let newColour = this.setColour(newMode);
+    console.log("this is the new mode: " + newMode);
     return (
       <React.Fragment>
             <linearGradient id="grayColour">
@@ -99,10 +158,15 @@ class ThermostatKnob extends React.Component{
    <path d="M140 355 
         A155 155 0 0 0 310 355"
         fill="none" stroke="url(#grayColour)" stroke-width="6" />
-        <circle cx="224.5" cy="225.5" r="152.5" fill="#50505a"/>
+        <circle cx="224.5" cy="225.5" r="152.5" fill={newColour}/>
+        
       </React.Fragment>
     );
   }
+}
+
+class colourChange extends React.Component {
+
 }
 
 class TemperatureDials extends React.Component{
@@ -141,6 +205,7 @@ class TemperatureIndicator extends React.Component {
   startDrag = e => {
     e.preventDefault();
     const knob = e.target.getBoundingClientRect();
+     
     // coordinates of the center of the knob
     const centerX = knob.left + knob.width / 2;
     const centerY = knob.top + knob.height / 2;
@@ -254,7 +319,9 @@ class TestControls extends React.Component{
         <form>
           <label htmlFor="currentTemp">Set Current Temperature: </label>
           <input 
-            type="text"
+            type="range"
+            min="32"
+            max="100"
             name="currentTemp"
             value={this.props.currentTemp}
             onChange={this.props.onChangeValue}
