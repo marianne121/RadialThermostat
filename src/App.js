@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import Scale from './scale.png' 
-import TempData from './Model/TemperatureData.model'
+import TempData from './Model/ThermostatData.model'
 import * as DefVals from './DefaultValues.js'
 
 class App extends React.Component {
@@ -116,9 +116,8 @@ class ThermostatKnob extends React.Component{
     console.log(value);
     if(currentTemp > targetTemp + dT + dTCool) { // set blue = #4a92d8
       mode = DefVals.cooling;
-      console.log("in the cooling loop");
-    } else if (currentTemp < targetTemp + dT + dTHeat) { // set red = #e06b71
-      mode = DefVals.heating;;
+    } else if (currentTemp < targetTemp - dT - dTHeat) { // set red = #e06b71
+      mode = DefVals.heating;
     } else if (targetTemp - (dT-dTHeat) < currentTemp && // set default gray = #353b3f
     currentTemp < targetTemp + (dT-dTCool)){
       mode = DefVals.off;;
@@ -159,15 +158,10 @@ class ThermostatKnob extends React.Component{
    <path d="M140 355 
         A155 155 0 0 0 310 355"
         fill="none" stroke="url(#grayColour)" stroke-width="6" />
-        <circle cx="224.5" cy="225.5" r="152.5" fill={newColour}/>
-        
+        <circle cx="224.5" cy="225.5" r="152.5" fill={newColour}/>      
       </React.Fragment>
     );
   }
-}
-
-class colourChange extends React.Component {
-
 }
 
 class TemperatureDials extends React.Component{
@@ -275,7 +269,7 @@ class TemperatureIndicator extends React.Component {
       console.log("current Angle :" + currentAngle);
       angleDiff = 360-205+currentAngle;
     }
-    return ((maxValue-minValue+1) / fullAngle) * angleDiff + oldValue;
+    return ((maxValue-minValue) / fullAngle) * angleDiff + oldValue;
   };
 
   render () {
