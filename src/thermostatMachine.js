@@ -1,38 +1,32 @@
 import {Machine} from 'xstate';
 
-const thermostatMachine = Machine({
-    id: 'thermostat',
-    initial: 'start',
-    states: {
-      start: {
-        on: {
-          Default: 'OffMode',
-          Heating: 'HeatingMode',
-          Cooling: 'CoolingMode'
-        }
-      },
-      OffMode: {
-        on: {
-          Default: 'OffMode',
-          Heating: 'HeatingMode',
-          Cooling: 'CoolingMode'
-        }
-      },
-      HeatingMode: {
-        on: {
-          Default: 'OffMode',
-          Heating: 'HeatingMode',
-          Cooling: 'CoolingMode'
-        }
-      }, 
-      CoolingMode: {
-        on: {
-          Default: 'OffMode',
-          Heating: 'HeatingMode',
-          Cooling: 'CoolingMode'
-        }
+const ThermostatMachine = Machine({
+  id: 'thermostat',
+  initial: 'offMode',
+ 
+states: {
+    offMode: {
+      on: {
+        Default: 'offMode',
+        Heating: 'heatingMode',
+        Cooling: 'coolingMode'
+      }
+    },
+    heatingMode: {
+      on: {
+        Default: 'offMode',
+        Heating: 'heatingMode',
+        Cooling: 'coolingMode'
+      }
+    }, 
+    coolingMode: {
+      on: {
+        Default: 'offMode',
+        Heating: 'heatingMode',
+        Cooling: 'coolingMode'
       }
     }
-  });
+  }
+});
 
-  export default thermostatMachine;
+  export default ThermostatMachine;

@@ -1,3 +1,21 @@
+## Assignment Brief
+
+A radial thermostat for NUS CS3249 Assignment 3
+
+## Radial Thermostat functionality
+Allows user to set a target temperature and control the current temperature by turning the thermostat knob. <br>
+The target temperature and current temperature will be displayed on the thermostat and updated in real time. <br>
+The thermostat has 3 modes: OFF, HEATING, COOLING. <br>
+The thermostat knob will change its colour according to these modes,
+with OFF - gray, HEATING - red, COOLING - blue <br>
+
+## Repository Structure
+src/App.js is the class that controls the entire application <br>
+src/Model contains the models associated with the MVVM diagram. <br>
+In this scenario, we only have 1 model: TemperatureData.model.js <br>
+src/View contains the views associated with the MVVM diagram. <br>
+The MainPanel consists of all the main components that make up the radial thermostat body while the TestControl allows the user to input a current temperature for testing.<br>
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

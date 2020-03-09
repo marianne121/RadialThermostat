@@ -11,6 +11,8 @@ export const totalDegrees = 310;
 // temperature range
 export const minTargetTemp = 50;
 export const maxTargetTemp = 80;
+export const minCurrentTemp = 32;
+export const maxCurrentTemp = 100;
 
 export const off = "OFF";
 export const cooling = "COOLING";

@@ -1,4 +1,4 @@
-class ThermostatData {
+class TemperatureData {
     constructor(currentTemp, targetTemp, mode) {
         this.currentTemp = currentTemp;
         this.targetTemp = targetTemp;
@@ -6,4 +6,5 @@ class ThermostatData {
     }
 }
 
-export default ThermostatData;
+
+export default TemperatureData;

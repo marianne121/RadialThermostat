@@ -1,4 +1,5 @@
 import React from 'react';
+import * as DefVals from '../DefaultValues.js';
 
 class TestControls extends React.Component{
     constructor(props) {
@@ -12,9 +13,9 @@ class TestControls extends React.Component{
             <label htmlFor="currentTemp">Set Current Temperature: </label>
             <input 
               type="range"
-              min="32"
-              max="100"
               name="currentTemp"
+              min={DefVals.minCurrentTemp}
+              max={DefVals.maxCurrentTemp}
               value={this.props.currentTemp}
               onChange={this.props.onChangeValue}
               />

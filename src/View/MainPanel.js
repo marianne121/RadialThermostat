@@ -1,10 +1,7 @@
 import React from 'react';
-import './MainPanelView.css';
+import './MainPanel.css';
 import Scale from '../scale.png';
-import TempData from '../Model/ThermostatData.model';
 import * as DefVals from '../DefaultValues.js';
-import thermostatMachine from '../thermostatMachine.js';
-import {interpret} from 'xstate';
 
 class MainPanel extends React.Component {
   constructor(props) {
@@ -12,14 +9,10 @@ class MainPanel extends React.Component {
 
   }
 
-  // handleTargetChange = (newTarget) => this.setState({targetTemp: newTarget});
-  // handleCurrentChange = (event) => this.setState({currentTemp: event.target.value});
-
   render () {
 
     return (
       <div className="MainPanel">
-        <div className="radial-thermostat">
         <svg width="400" height="400">
         <RadialThermostat
         targetTemp={this.props.targetTemp}
@@ -46,8 +39,6 @@ class MainPanel extends React.Component {
             currentTemp={this.props.currentTemp}
             />
           </div>
-          
-        </div>
       </div>
     );
   }
@@ -191,20 +182,6 @@ class TemperatureIndicator extends React.Component {
     const centerX = knob.left + knob.width / 2;
     const centerY = knob.top + knob.height / 2;
 
-    // To fix custom event if time permits
-    // var moveSliderEvent = new CustomEvent('moveSlider', {
-    //   detail: {
-    //     currentDegree: this.currentDeg,
-    //     targetTemp: this.state.newValue
-    //   }
-    // });
-    // document.addEventListener('moveSlider', function(e) {
-    //   console.log("Slider event complete");
-    //   console.log("Current degrees: " + e.detail.currentDegree);
-    //   console.log("Current target temperature: " + e.detail.targetTemp);
-    // });
-    // document.dispatchEvent(moveSliderEvent);
-
     const moveHandler = e => {
       this.currentDeg = this.getDeg(e.clientX, e.clientY, centerX, centerY);
       let newValue = Math.floor(
@@ -217,6 +194,8 @@ class TemperatureIndicator extends React.Component {
           this.endAngle,
         )
       );
+
+      // Update variables in state
       this.setState({ deg: this.currentDeg });
       this.props.onChange(newValue);
     };
@@ -226,6 +205,38 @@ class TemperatureIndicator extends React.Component {
       document.removeEventListener("mousemove", moveHandler);
     });
   };
+
+  mouseScroll = e => {
+    let verticalScroll = e.deltaY;
+    let newTemp;
+    // delta y > 0 when scrolling down --> should decrease temperature
+    if (verticalScroll > 0) {
+      newTemp = this.props.targetTemp - 1;
+      // setting maximum limits for temperature
+      if(newTemp < this.minTemp) {
+        newTemp = this.minTemp;
+      }
+      
+    } else { // delta y < 0 when scrolling up --> should increase temperature
+      newTemp = this.props.targetTemp + 1;
+      // setting minimum limits for temperature
+      
+      if(newTemp > this.maxTemp) {
+        newTemp = this.maxTemp;
+      }
+    }
+
+    // Find new degree for slider pointer
+    let newDegree = this.getAngle(this.fullAngle, this.maxTemp, this.minTemp, newTemp, this.startAngle);
+    if(newDegree>360) {
+      newDegree = newDegree%360;
+    }
+    
+    // Update variables in state
+    this.setState({ deg: this.newDegree });
+    this.props.onChange(newTemp);
+  }
+
 
   getDeg = (clickX, clickY, centerX, centerY) => {
     const lengthX = centerX - clickX;
@@ -276,7 +287,7 @@ class TemperatureIndicator extends React.Component {
     return (
       <div>
         <div className="TemperatureIndicator">
-        <div className="Pointer" style={styles} onMouseDown={this.startDrag}/>
+        <div className="Pointer" style={styles} onMouseDown={this.startDrag} onWheel={this.mouseScroll}/>
         </div>
       </div>
     )
