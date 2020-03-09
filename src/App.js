@@ -1,26 +1,26 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Scale from './scale.png' 
+import TempData from './Model/TemperatureData.model'
+import * as DefVals from './DefaultValues.js'
 
 class App extends React.Component {
   constructor(props) {
     super(props);
+    this.currentData = new TempData(66, 50, DefVals.off);
     this.state = {
-      currentTemp : 66,
-      targetTemp: 50,
-      mode: "off"
+      currentTemp : this.currentData.currentTemp,
+      targetTemp: this.currentData.targetTemp,
+      mode: this.currentData.mode
     };
   }
 
-  handleTargetChange = newValue => {this.setState({targetTemp: newValue});
-  
-  console.log("new value has been passed: "+this.state.targetTemp);};
-  handleCurrentChange = e => this.setState({currentTemp: e.target.value});
+  handleTargetChange = (newTarget) => this.setState({targetTemp: newTarget});
+  handleCurrentChange = (event) => this.setState({currentTemp: event.target.value});
 
   render () {
     return (
-      <div className="App">
+      <div className="MainPanel">
         <div className="radial-thermostat">
         <svg width="400" height="400">
         <RadialThermostat
@@ -32,23 +32,24 @@ class App extends React.Component {
           <TemperatureDials/>
           </div>
           <TemperatureIndicator
-          totalDeg={310}
-          startAngle={205}
-          endAngle={155}
-          minTemp={50}
-          maxTemp={80}
-          targetTemp={50}
-          color={true}
+          totalDeg={DefVals.totalDegrees}
+          startAngle={DefVals.startingDegree}
+          endAngle={DefVals.endingDegree}
+          minTemp={DefVals.minTargetTemp}
+          maxTemp={DefVals.maxTargetTemp}
+          targetTemp={this.currentData.targetTemp}
           onChange={this.handleTargetChange}
         />
-          
           <div className="TargetTemp">
             <TargetTemp targetTemp={this.state.targetTemp}/>
           </div>
           <div>
+          <div className="TestControls">
           <TestControls 
           value={this.state.currentTemp}
           onChangeValue={this.handleCurrentChange}/>
+          </div>
+          
         </div>
           <div className="CurrentTemp">
             <CurrentTemp 
@@ -106,32 +107,32 @@ class ThermostatKnob extends React.Component{
   }
 
   updateMode = (currentTemp, targetTemp, mode) => {
-    let dT = 2;
-    let dTCool = 1.5;
-    let dTHeat = 1;
+    let dT = DefVals.dT;
+    let dTCool = DefVals.dTCool;
+    let dTHeat = DefVals.dTHeat;
 
     console.log("Target temp is : " + targetTemp + " & current temp is : " + currentTemp);
     let value = targetTemp+dT+dTHeat;
     console.log(value);
     if(currentTemp > targetTemp + dT + dTCool) { // set blue = #4a92d8
-      mode = "cooling";
+      mode = DefVals.cooling;
       console.log("in the cooling loop");
     } else if (currentTemp < targetTemp + dT + dTHeat) { // set red = #e06b71
-      mode = "heating";
+      mode = DefVals.heating;;
     } else if (targetTemp - (dT-dTHeat) < currentTemp && // set default gray = #353b3f
     currentTemp < targetTemp + (dT-dTCool)){
-      mode = "off";
+      mode = DefVals.off;;
     } 
     return mode;
   };
 
   setColour = (mode) => {
     let colour;
-    if(mode==="cooling") {
+    if(mode===DefVals.cooling) {
       colour = "#4a92d8";
-    } else if (mode==="heating") {
+    } else if (mode===DefVals.heating) {
       colour = "#e06b71";
-    } else if(mode==="off") {
+    } else if(mode===DefVals.off) {
       colour = "#353b3f";
     }
     return colour;

@@ -1,4 +1,4 @@
-.App {
+.MainPanel {
   background-color: #E8E8E8;
   min-height: 100vh;
 }
@@ -27,6 +27,11 @@
   left: 148px;
   top: 223px;
   text-align: center;
+}
+
+.TestControls {
+  position: absolute;
+  left: 50px;
 }
 
 h1 {
